@@ -30,15 +30,15 @@ class StoreCategoryRequest extends FormRequest
     /**
      * Get custom messages for validator errors.
      */
-  public function messages(): array
-  {
-    return [
-      'name.required' => 'Le nom de la catégorie est obligatoire.',
-      'name.string' => 'Le nom de la catégorie doit être une chaîne de caractères.',
-      'name.max' => 'Le nom de la catégorie ne doit pas dépasser 255 caractères.',
-      'color.string' => 'La couleur doit être une chaîne de caractères.',
-      'color.max' => 'La couleur ne doit pas dépasser 7 caractères.',
-      'color.regex' => 'La couleur doit être un code hexadécimal valide (ex: #ff0000).',
-    ];
-  }
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Le nom de la catégorie est obligatoire.',
+            'name.string' => 'Le nom de la catégorie doit être une chaîne de caractères.',
+            'name.max' => 'Le nom de la catégorie ne doit pas dépasser 255 caractères.',
+            'color.string' => 'La couleur doit être une chaîne de caractères.',
+            'color.max' => 'La couleur ne doit pas dépasser 7 caractères.',
+            'color.regex' => 'La couleur doit être un code hexadécimal valide (ex: #ff0000).',
+        ];
+    }
 }

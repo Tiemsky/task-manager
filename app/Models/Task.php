@@ -8,17 +8,43 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read \App\Models\Category|null $category
- * @property-read \App\Models\User|null $user
- *
+ * @property int $id
+ * @property int $user_id
+ * @property int $category_id
+ * @property string $title
+ * @property string|null $description
+ * @property string|null $due_date
+ * @property string $status
+ * @property string $priority
+ * @property string|null $completed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Category $category
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Task byCategory($categoryId)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task byPriority($priority)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task byStatus($status)
  * @method static \Illuminate\Database\Eloquent\Builder|Task completed()
  * @method static \Database\Factories\TaskFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Task forUser($userId)
  * @method static \Illuminate\Database\Eloquent\Builder|Task inProgress()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Task overdue()
  * @method static \Illuminate\Database\Eloquent\Builder|Task pending()
  * @method static \Illuminate\Database\Eloquent\Builder|Task query()
- *
+ * @method static \Illuminate\Database\Eloquent\Builder|Task search($search)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereDueDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task wherePriority($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereUserId($value)
  * @mixin \Eloquent
  */
 class Task extends Model

@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request): Response
     {
-       // Vérification de l'autorisation via CategoryPolicy
+        // Vérification de l'autorisation via CategoryPolicy
         $this->authorize('viewAny', Category::class);
         $categories = $request->user()->categories()->withCount('tasks')->get();
 
@@ -35,7 +35,7 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category): RedirectResponse
     {
-      // Vérification de l'autorisation via CategoryPolicy
+        // Vérification de l'autorisation via CategoryPolicy
         $this->authorize('update', $category);
         $request->validate([
             'name' => 'required|string|max:255',

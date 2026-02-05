@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Categories API routes
     Route::apiResource('categories', CategoryController::class);
-
 
 });

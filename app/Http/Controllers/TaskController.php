@@ -23,7 +23,7 @@ class TaskController extends Controller
      */
     public function index(Request $request): Response
     {
-      // Vérification de l'autorisation via TaskPolicy
+        // Vérification de l'autorisation via TaskPolicy
         $this->authorize('viewAny', Task::class);
         $filters = $request->only(['status', 'priority', 'category_id', 'search']);
 

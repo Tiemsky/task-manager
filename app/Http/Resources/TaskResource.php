@@ -26,7 +26,7 @@ class TaskResource extends JsonResource
             'category' => new CategoryResource($this->whenLoaded('category')),
             'user' => [
                 'id' => $this->user_id,
-                'name' => $this->whenLoaded('user', fn() => $this->user->name),
+                'name' => $this->whenLoaded('user', fn () => $this->user->name),
             ],
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),

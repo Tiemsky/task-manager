@@ -16,14 +16,14 @@ class TaskController extends Controller
 {
     public function __construct(
         protected TaskService $taskService
-    ) { }
+    ) {}
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-         // Vérification de l'autorisation via TaskPolicy
+        // Vérification de l'autorisation via TaskPolicy
         $this->authorize('viewAny', Task::class);
         $filters = $request->only(['status', 'priority', 'category_id', 'search']);
 
@@ -60,7 +60,7 @@ class TaskController extends Controller
      */
     public function show(Task $task): TaskResource
     {
-         // Vérification de l'autorisation via TaskPolicy
+        // Vérification de l'autorisation via TaskPolicy
         $this->authorize('view', $task);
         $task->load(['category', 'user']);
 
@@ -72,7 +72,7 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task): JsonResponse
     {
-      // Vérification de l'autorisation via TaskPolicy
+        // Vérification de l'autorisation via TaskPolicy
         $this->authorize('update', $task);
         $task = $this->taskService->updateTask($task, $request->validated());
 
