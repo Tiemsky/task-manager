@@ -45,6 +45,13 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Catégories
                                 </NavLink>
+
+                                <NavLink
+                                    :href="route('tasks.index')"
+                                    :active="route().current('tasks.index')"
+                                >
+                                    Tâches
+                                </NavLink>
                             </div>
                         </div>
 
