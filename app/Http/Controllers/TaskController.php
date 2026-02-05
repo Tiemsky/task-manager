@@ -2,115 +2,130 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
+use App\Services\TaskService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class TaskController extends Controller
 {
+    public function __construct(
+        protected TaskService $taskService
+    ) {}
+
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request): Response
     {
         $filters = $request->only(['status', 'priority', 'category_id', 'search']);
 
-        $tasks = $request->user()->tasks()
-        /*
-        * On loaded la catégorie pour éviter les requêtes N+1
-        */
-            ->with('category')
-            /*
-            * Si un filtre de catégorie est présent, on l'applique
-            */
-            ->search($request->search)
-            ->latest()
-            ->paginate(10);
+        $tasks = $this->taskService->getPaginatedTasks(
+            user: $request->user(),
+            status: $filters['status'] ?? null,
+            priority: $filters['priority'] ?? null,
+            categoryId: $filters['category_id'] ?? null,
+            search: $filters['search'] ?? null,
+            perPage: 15
+        );
+
+        $categories = Auth::user()->categories()->get();
+        $stats = $this->taskService->getTaskStatistic($request->user());
 
         return Inertia::render('Tasks/Index', [
             'tasks' => $tasks,
-            'categories' => $request->user()->categories,
+            'categories' => $categories,
             'filters' => $filters,
-            'stats' => '',
+            'stats' => $stats,
         ]);
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create(): Response
     {
+        $categories = Auth::user()->categories()->get();
+
         return Inertia::render('Tasks/Create', [
-            'categories' => auth()->user()->categories,
+            'categories' => $categories,
         ]);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreTaskRequest $request): RedirectResponse
+    {
+        $task = $this->taskService->createTask(
+            $request->user(),
+            $request->validated()
+        );
+
+        return redirect()->route('tasks.index')
+            ->with('success', 'Tâche créée avec succès.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
     public function show(Task $task): Response
     {
+        $task->load(['category', 'user']);
+
         return Inertia::render('Tasks/Show', [
-            'task' => $task->load('category'),
-            'categories' => auth()->user()->categories,
+            'task' => $task,
         ]);
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(Task $task): Response
     {
+        $categories = Auth::user()->categories()->get();
+        $task->load('category');
+
         return Inertia::render('Tasks/Edit', [
-            'task' => $task->load('category'),
-            'categories' => auth()->user()->categories,
+            'task' => $task,
+            'categories' => $categories,
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
-            'description' => 'nullable|string',
-            'due_date' => 'nullable|date',
-            'priority' => 'required|in:low,medium,high',
-        ]);
-
-        $request->user()->tasks()->create($validated);
+        $this->taskService->updateTask($task, $request->validated());
 
         return redirect()->route('tasks.index')
-            ->with('success', 'Tâche créée avec succès !');
-
+            ->with('success', 'Tâche mise à jour avec succès.');
     }
 
-    public function update(Request $request, Task $task)
-    {
-
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'status' => 'required|in:pending,in_progress,completed',
-            'category_id' => 'nullable|exists:categories,id',
-        ]);
-
-        $task->update($validated);
-
-        return redirect()->route('tasks.index')
-            ->with('success', 'Tâche mise à jour.');
-    }
-
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(Task $task): RedirectResponse
     {
-        $task->delete();
+        $this->taskService->deleteTask($task);
 
         return redirect()->route('tasks.index')
-            ->with('success', 'Tâche supprimée définitivement.');
+            ->with('success', 'Tâche supprimée avec succès.');
     }
 
+    /**
+     * Toggle task completion status.
+     */
     public function toggleStatus(Task $task): RedirectResponse
     {
 
-        if ($task->status === 'completed') {
-            $task->status = 'pending';
-            $task->completed_at = null;
-            $task->save();
-        } else {
-            $task->status = 'completed';
-            $task->completed_at = now();
-            $task->save();
-        }
-
-        $task->fresh(['category']);
+        $this->taskService->toggleTaskStatus($task);
 
         return back()->with('success', 'Statut de la tâche mis à jour.');
     }

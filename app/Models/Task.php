@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,12 @@ class Task extends Model
         'due_date',
         'status',
         'priority',
+        'completed_at',
+    ];
+
+    // cast due_date and completed_at to Carbon instances
+    protected $dates = [
+        'due_date',
         'completed_at',
     ];
 
@@ -85,5 +92,95 @@ class Task extends Model
         }
 
         return $query;
+    }
+
+    /**
+     * Scope a query to only include tasks for a specific user.
+     */
+    public function scopeForUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    /**
+     * Scope a query to filter by status.
+     */
+    public function scopeByStatus($query, $status)
+    {
+        if ($status) {
+            return $query->where('status', $status);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope a query to filter by priority.
+     */
+    public function scopeByPriority($query, $priority)
+    {
+        if ($priority) {
+            return $query->where('priority', $priority);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope a query to filter by category.
+     */
+    public function scopeByCategory($query, $categoryId)
+    {
+        if ($categoryId) {
+            return $query->where('category_id', $categoryId);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope a query to get overdue tasks.
+     */
+    public function scopeOverdue($query)
+    {
+        return $query->where('due_date', '<', Carbon::today())
+            ->whereIn('status', ['pending', 'in_progress']);
+    }
+
+    /**
+     * Check if task is overdue.
+     */
+    public function isOverdue(): bool
+    {
+        // Ensure due_date is a Carbon instance before calling isPast()
+        if ($this->due_date && ! ($this->due_date instanceof Carbon)) {
+            $this->due_date = Carbon::parse($this->due_date);
+        }
+
+        return $this->due_date &&
+               $this->due_date->isPast() &&
+               in_array($this->status, ['pending', 'in_progress']);
+    }
+
+    /**
+     * Mark task as completed.
+     */
+    public function markAsCompleted(): void
+    {
+        $this->update([
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+    }
+
+    /**
+     * Mark task as pending.
+     */
+    public function markAsPending(): void
+    {
+        $this->update([
+            'status' => 'pending',
+            'completed_at' => null,
+        ]);
     }
 }

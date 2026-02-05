@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { useForm } from "@inertiajs/vue3";
+import InputError from "@/Components/InputError.vue";
 
 defineProps({ categories: Array });
 const form = useForm({
@@ -26,16 +27,20 @@ const form = useForm({
                     placeholder="Titre de la tâche"
                     class="w-full border-gray-200 rounded-2xl p-4"
                 />
+                <InputError class="mt-2" :message="form.errors.title" />
+
                 <textarea
                     v-model="form.description"
                     placeholder="Description de la tâche"
                     class="w-full border-gray-200 rounded-2xl p-4"
                 ></textarea>
+                <InputError class="mt-2" :message="form.errors.description" />
                 <input
                     v-model="form.due_date"
                     type="date"
                     class="w-full border-gray-200 rounded-2xl p-4"
                 />
+                <InputError class="mt-2" :message="form.errors.due_date" />
                 <div class="grid grid-cols-2 gap-4">
                     <select
                         v-model="form.category_id"
@@ -50,6 +55,10 @@ const form = useForm({
                             {{ category.name }}
                         </option>
                     </select>
+                    <InputError
+                        class="mt-2"
+                        :message="form.errors.category_id"
+                    />
                     <select
                         v-model="form.priority"
                         class="border-gray-200 rounded-2xl"
@@ -58,6 +67,7 @@ const form = useForm({
                         <option value="medium">Moyenne</option>
                         <option value="high">Haute</option>
                     </select>
+                    <InputError class="mt-2" :message="form.errors.priority" />
                 </div>
                 <button
                     type="submit"

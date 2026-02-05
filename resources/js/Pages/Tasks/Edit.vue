@@ -11,7 +11,7 @@ const form = useForm({
     category_id: props.task.category_id || "",
     priority: props.task.priority,
     status: props.task.status,
-    due_date: props.task.due_date ? props.task.due_date.split("T")[0] : "",
+    due_date: props.task.due_date,
 });
 
 const submit = () => form.put(route("tasks.update", props.task.id));
@@ -34,6 +34,17 @@ const submit = () => form.put(route("tasks.update", props.task.id));
                             class="w-full border-gray-300 rounded mt-1"
                         />
                         <InputError :message="form.errors.title" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium"
+                            >Description</label
+                        >
+                        <textarea
+                            v-model="form.description"
+                            class="w-full border-gray-300 rounded mt-1"
+                        ></textarea>
+                        <InputError :message="form.errors.description" />
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -63,6 +74,18 @@ const submit = () => form.put(route("tasks.update", props.task.id));
                                 <option value="high">Haute</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium"
+                            >Date d’échéance</label
+                        >
+                        <input
+                            v-model="form.due_date"
+                            type="date"
+                            class="w-full border-gray-300 rounded mt-1"
+                        />
+                        <InputError :message="form.errors.due_date" />
                     </div>
 
                     <div class="flex items-center justify-between mt-6">
