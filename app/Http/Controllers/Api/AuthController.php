@@ -67,6 +67,17 @@ class AuthController extends Controller
     }
 
     /*
+    * Show authenticated user profile
+    */
+    public function show(Request $request)
+    {
+        return response()->json([
+            'status' => true,
+            'user'   => new AuthUserResource($request->user()),
+        ], 200);
+    }
+
+    /*
     * Logout
     */
     public function logout(Request $request)

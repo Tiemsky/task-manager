@@ -31,25 +31,25 @@ class TaskOverdueNotification extends Notification implements ShouldQueue
         ];
 
         $priorityColor = $priorityColors[$this->task->priority] ?? '#6B7280';
-        $priorityLabel = match ($this->task->priority) {
+        $priorityLabel = match($this->task->priority) {
             'low' => 'Basse',
             'medium' => 'Moyenne',
             'high' => 'Haute',
         };
 
         return (new MailMessage)
-            ->subject('Date d\'échéance dépassée - '.$this->task->title)
-            ->greeting('Bonjour '.$notifiable->name.',')
+            ->subject('Date d\'échéance dépassée - ' . $this->task->title)
+            ->greeting('Bonjour ' . $notifiable->name . ',')
             ->line('**Une tâche importante nécessite votre attention !**')
             ->line('')
             ->line('La date d\'échéance de votre tâche suivante est dépassée :')
             ->line('')
-            ->line('**Titre :** '.$this->task->title)
-            ->line('**Date d\'échéance :** '.$this->task->due_date->format('d/m/Y'))
-            ->line('**Jours de retard :** '.$this->daysOverdue.' jour(s)')
-            ->line('**Priorité :** <span style="color: '.$priorityColor.'; font-weight: bold;">'.$priorityLabel.'</span>')
+            ->line('**Titre :** ' . $this->task->title)
+            ->line('**Date d\'échéance :** ' . $this->task->due_date->format('d/m/Y'))
+            ->line('**Jours de retard :** ' . $this->daysOverdue . ' jour(s)')
+            ->line('**Priorité :** <span style="color: ' . $priorityColor . '; font-weight: bold;">' . $priorityLabel . '</span>')
             ->when($this->task->description, function ($mail) {
-                return $mail->line('**Description :** '.$this->task->description);
+                return $mail->line('**Description :** ' . $this->task->description);
             })
             ->line('')
             ->action('Voir la tâche', route('tasks.show', $this->task))
