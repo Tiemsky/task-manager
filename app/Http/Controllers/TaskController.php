@@ -23,6 +23,8 @@ class TaskController extends Controller
      */
     public function index(Request $request): Response
     {
+      // Vérification de l'autorisation via TaskPolicy
+        $this->authorize('viewAny', Task::class);
         $filters = $request->only(['status', 'priority', 'category_id', 'search']);
 
         $tasks = $this->taskService->getPaginatedTasks(
@@ -76,6 +78,8 @@ class TaskController extends Controller
      */
     public function show(Task $task): Response
     {
+        // Vérification de l'autorisation via TaskPolicy
+        $this->authorize('view', $task);
         $task->load(['category', 'user']);
 
         return Inertia::render('Tasks/Show', [
@@ -88,6 +92,8 @@ class TaskController extends Controller
      */
     public function edit(Task $task): Response
     {
+        // Vérification de l'autorisation via TaskPolicy
+        $this->authorize('update', $task);
         $categories = Auth::user()->categories()->get();
         $task->load('category');
 
@@ -102,6 +108,8 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
+        // Vérification de l'autorisation via TaskPolicy
+        $this->authorize('update', $task);
         $this->taskService->updateTask($task, $request->validated());
 
         return redirect()->route('tasks.index')
@@ -113,6 +121,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task): RedirectResponse
     {
+        // Vérification de l'autorisation via TaskPolicy
+        $this->authorize('delete', $task);
         $this->taskService->deleteTask($task);
 
         return redirect()->route('tasks.index')
